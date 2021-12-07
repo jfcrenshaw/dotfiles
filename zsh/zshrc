@@ -5,11 +5,11 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-# Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-
-# Path to zsh customizations
+# Path to zsh config
 ZSH_CUSTOM="$HOME/.dotfiles/zsh"
+
+# Path to oh-my-zsh installation.
+export ZSH="$ZSH_CUSTOM/oh-my-zsh"
 
 # set the prompt theme
 ZSH_THEME="powerlevel10k/powerlevel10k"

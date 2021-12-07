@@ -6,6 +6,10 @@
 	path = dotbot-brewfile
 	url = https://github.com/sobolevn/dotbot-brewfile.git
 	ignore = dirty
+[submodule "zsh/oh-my-zsh"]
+	path = zsh/oh-my-zsh
+	url = git@github.com:ohmyzsh/ohmyzsh.git
+	ignore = dirty
 [submodule "zsh/plugins/zsh-autosuggestions"]
 	path = zsh/plugins/zsh-autosuggestions
 	url = git@github.com:zsh-users/zsh-autosuggestions.git
@@ -14,10 +18,11 @@
 	path = zsh/plugins/zsh-syntax-highlighting
 	url = git@github.com:zsh-users/zsh-syntax-highlighting.git
 	ignore = dirty
+[submodule "zsh/themes/dracula-syntax-highlighting"]
+	path = zsh/themes/dracula-syntax-highlighting
+	url = git@github.com:dracula/zsh-syntax-highlighting.git
+	ignore = dirty
 [submodule "zsh/themes/powerlevel10k"]
 	path = zsh/themes/powerlevel10k
 	url = git@github.com:romkatv/powerlevel10k.git
 	ignore = dirty
-[submodule "zsh/themes/dracula-syntax-highlighting"]
-	path = zsh/themes/dracula-syntax-highlighting
-	url = git@github.com:dracula/zsh-syntax-highlighting.git
