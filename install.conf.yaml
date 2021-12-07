@@ -1,3 +1,28 @@
-- clean: []
-- link: {}
-- shell: []
+- defaults:
+  link:
+    create: true
+    relink: true
+  shell:
+    stderr: true
+
+- clean: ["~"]
+
+- shell:
+    - [
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)",
+        Installing Oh My Zsh,
+      ]
+    - [git submodule update --init --recursive, Installing submodules]
+
+- link:
+  ~/.zshrc:
+    path: zsh/zshrc
+    force: true
+  ~/.zprofile:
+    if: "[[ $SHELL == *`zsh` ]]"
+    path: zsh/zprofile
+    force: true
+  ~/.profile:
+    if: "[[ $SHELL == *`bash` ]]"
+    path: profile.sh
+    force: true
