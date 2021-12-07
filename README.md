@@ -1,9 +1,19 @@
 # Dotfile Repo
 
+Run the following commands:
+```bash
+cd $HOME
+git clone git@github.com:jfcrenshaw/dotfiles.git .dotfiles
+cd .dotfiles
+./install
+```
+
+then restart the terminal.
+
 ## Done so far
 
 - setup zshell using oh-my-zsh, powerlevel10k, and associated plugins/themes
-- setup zprofile to source profile.sh
+- setup zprofile to source `profile.sh`
 - setup profile to add homebrew, local binaries, and cuda to the path
 - setup profile to run zsh if not currently running
 
@@ -16,6 +26,7 @@
 - figure out how to include mac os settings in this repo. Maybe look at [this repo](https://github.com/denolfe/dotfiles/tree/master/macos).
 - test that all of this actually works!
 - write a step-by-step guide of how to actually do all of this
+- write instructions for how to install zsh locally without sudo
 
 ### Notes
 
