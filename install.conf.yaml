@@ -1,13 +1,14 @@
 - defaults:
-  link:
-    create: true
-    relink: true
-  shell:
-    stderr: true
+    link:
+      create: true
+      relink: true
+    shell:
+      stderr: true
 
 - clean: ["~"]
 
 - shell:
+    - [rm -rf "$HOME/.oh-my-zsh", Deleting old Oh My Zsh install (if present)]
     - [
         sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)",
         Installing Oh My Zsh,
@@ -15,14 +16,14 @@
     - [git submodule update --init --recursive, Installing submodules]
 
 - link:
-  ~/.zshrc:
-    path: zsh/zshrc
-    force: true
-  ~/.zprofile:
-    if: "[[ $SHELL == *`zsh` ]]"
-    path: zsh/zprofile
-    force: true
-  ~/.profile:
-    if: "[[ $SHELL == *`bash` ]]"
-    path: profile.sh
-    force: true
+    ~/.zshrc:
+      path: zsh/zshrc
+      force: true
+    ~/.zprofile:
+      if: "[[ $SHELL == *`zsh` ]]"
+      path: zsh/zprofile
+      force: true
+    ~/.profile:
+      if: "[[ $SHELL == *`bash` ]]"
+      path: profile.sh
+      force: true

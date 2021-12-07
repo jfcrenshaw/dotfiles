@@ -3,7 +3,7 @@ if [ -e /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-# path to local programs
+# path to local binaries
 LOCAL_BIN="$HOME/.local/bin"
 if [ -d "$LOCAL_BIN" ]; then
     export PATH="$LOCAL_BIN:$PATH"
