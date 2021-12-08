@@ -57,18 +57,6 @@ alias python="python3"
 alias python-config="python3-config"
 alias pip="pip3"
 
-# protect against global installs
-# pip should only run if there is a virtualenv currently activated
-export PIP_REQUIRE_VIRTUALENV=true
-
-# command to override pip restriction above.
-# use `gpip` to force installation of a package 
-# in the global python environment
-# Never do this! It is just an escape hatch.
-gpip(){
-   PIP_REQUIRE_VIRTUALENV=false pip "$@"
-}
-
 # command to print a 256-color lookup table
 # these are all 8-bit colors
 color_table(){
