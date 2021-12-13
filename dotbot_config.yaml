@@ -18,5 +18,10 @@
     ~/.profile:
       if: "[[ $SHELL == *'bash' ]]"
       path: profile.sh
-    ~/.gitconfig: gitconfig
-    ~/.config/pypoetry/config.toml: poetry.toml
+    ~/.gitconfig: git.config
+    ~/.ssh/config:
+      if: "[[ $$(uname -s) == Darwin ]]"
+      path: ssh.config
+    ~/.config/pypoetry/config.toml:
+      if: "[[ $$(uname -s) == Linux ]]"
+      path: poetry.toml
