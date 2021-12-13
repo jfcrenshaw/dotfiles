@@ -53,6 +53,7 @@ rm -rf .dotfiles
 
 ## To do
 
+- make sure everything works on my mac
 - ssh config
 - switch all mac apps to homebrew installs
 - include configs for all of these installs in this repo
