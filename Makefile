@@ -28,12 +28,16 @@ install: $(POETRY) dotfiles
 # NOTE I NEED TO ADD POETRY CONFIG TO THE DOBOT FILES
 # IN PARTICULAR, I NEED TO SET IT TO USE CONDA ENVS
 $(POETRY):
-	@if [ ! -f "$(POETRY)" ]; then\
-		echo -e "- Installing Poetry..." | tee -a make.log;\
-		echo "" >> make.log;\
-		curl -sSL https://install.python-poetry.org | python3 - 2>&1 >> make.log | tee -a make.log;\
-	else \
-		echo "- Poetry already installed. To update, run 'make update'." | tee -a make.log;\
+	@if [[ $$(uname -s) == Linux ]]; then\
+		if [ ! -f "$(POETRY)" ]; then\
+			echo -e "- Installing Poetry..." | tee -a make.log;\
+			echo "" >> make.log;\
+			curl -sSL https://install.python-poetry.org | python3 - 2>&1 >> make.log | tee -a make.log;\
+		else\
+			echo "- Poetry already installed. To update, run 'make update'." | tee -a make.log;\
+		fi;\
+	else\
+		echo "- Poetry will be installed by homebrew." | tee -a make.log;\
 	fi;\
 
 # install homebrew
