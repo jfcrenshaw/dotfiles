@@ -58,4 +58,4 @@ rm -rf .dotfiles
 - include configs for all of these installs in this repo
 - figure out how to include mac os settings in this repo. Maybe look at [this repo](https://github.com/denolfe/dotfiles/tree/master/macos).
 
-I previously added pyenv to the install script so that I could controll python versioning with it. I like this workflow, but I couldn't get pyenv to work on Baldur/Epyc, because they don't have all the devtools installed that are required to compile python. I might try to get something like that working later, or at least have it set up on my laptop. However, for now I will use conda for managing python versions in different environments.
+I previously added pyenv to the install script so that I could control python versioning with it. I like this workflow, but I couldn't get pyenv to work on Baldur/Epyc, because they don't have all the devtools installed that are required to compile python. I might try to get something like that working later, or at least have it set up on my laptop. However, for now I will use conda for managing python versions in different environments.
