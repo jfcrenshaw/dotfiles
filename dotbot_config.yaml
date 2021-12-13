@@ -20,7 +20,7 @@
       path: profile.sh
     ~/.gitconfig: git.config
     ~/.ssh/config:
-      if: "[[ $$(uname -s) == Darwin ]]"
+      if: "[[ $(uname -s) == Darwin ]]"
       path: ssh.config
     ~/.config/pypoetry/config.toml:
       if: "[[ $$(uname -s) == Linux ]]"
