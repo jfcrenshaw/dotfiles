@@ -23,5 +23,5 @@
       if: "[[ $(uname -s) == Darwin ]]"
       path: ssh.config
     ~/.config/pypoetry/config.toml:
-      if: "[[ $$(uname -s) == Linux ]]"
+      if: "[[ $(uname -s) == Linux ]]"
       path: poetry.toml
