@@ -50,11 +50,10 @@ rm -rf .dotfiles
 - created update and uninstall scripts
 - gitconfig
 - poetry config
+- ssh config
 
 ## To do
 
-- make sure everything works on my mac
-- ssh config
 - switch all mac apps to homebrew installs
 - include configs for all of these installs in this repo
 - figure out how to include mac os settings in this repo. Maybe look at [this repo](https://github.com/denolfe/dotfiles/tree/master/macos).
