@@ -49,10 +49,10 @@ rm -rf .dotfiles
 - automated poetry install
 - created update and uninstall scripts
 - gitconfig
+- poetry config
 
 ## To do
 
-- poetry config
 - ssh config
 - switch all mac apps to homebrew installs
 - include configs for all of these installs in this repo

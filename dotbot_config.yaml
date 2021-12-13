@@ -11,15 +11,12 @@
     - [git submodule update --init --recursive, Installing submodules]
 
 - link:
-    ~/.zshrc:
-      path: zsh/zshrc
-      force: true
+    ~/.zshrc: zsh/zshrc
     ~/.zprofile:
       if: "[[ $SHELL == *'zsh' ]]"
       path: zsh/zprofile
-      force: true
     ~/.profile:
       if: "[[ $SHELL == *'bash' ]]"
       path: profile.sh
-      force: true
     ~/.gitconfig: gitconfig
+    ~/.config/pypoetry/config.toml: poetry.toml
