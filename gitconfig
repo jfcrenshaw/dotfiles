@@ -1,0 +1,18 @@
+[user]
+	name = John Franklin Crenshaw
+	email = jfcrenshaw@gmail.com
+[credential]
+	helper = manager
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[color]
+  diff = auto
+  status = auto
+  branch = auto
+[color "status"]
+  changed = yellow
+  added = green
+  untracked = red

@@ -1,6 +1,6 @@
 - defaults:
     link:
-      create: true
+      force: true
       relink: true
     shell:
       stderr: true
@@ -22,3 +22,4 @@
       if: "[[ $SHELL == *'bash' ]]"
       path: profile.sh
       force: true
+    ~/.gitconfig: gitconfig

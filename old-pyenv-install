@@ -1,0 +1,32 @@
+###### In Makefile:
+
+LOCAL_BIN := $$HOME/.local/bin
+PYENV := $(LOCAL_BIN)/pyenv
+# install pyenv
+$(PYENV):
+	@if [[ $$(uname -s) == Linux ]]; then\
+		if [ ! -f "$(PYENV)" ]; then\
+			echo -e "Installing pyenv\n";\
+			export PYENV_ROOT="$$HOME/.local/share/pyenv";\
+			curl https://pyenv.run | bash;\
+			ln -s $$PYENV_ROOT/bin/pyenv $(PYENV);\
+		fi;\
+	elif [[ $$(uname -s) == Darwin ]]; then\
+		echo "pyenv will be installed by homebrew";\
+	fi
+
+###### In .profile:
+
+# initialize pyenv
+if [[ $(uname -s) == Linux ]]
+then
+    export PYENV_ROOT="$HOME/.local/share/pyenv"
+    eval "$(pyenv init --path)"
+else
+    echo "Not Linux!"
+fi
+
+###### In .zshrc
+
+# setup pyenv
+eval "$(pyenv init -)"
