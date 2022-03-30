@@ -21,7 +21,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # set the oh-my-zsh plugins to use
 plugins=(
-    copydir
+    copypath
     poetry
     zsh-autosuggestions
     zsh-syntax-highlighting
