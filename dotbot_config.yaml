@@ -25,3 +25,4 @@
     ~/.config/pypoetry/config.toml:
       if: "[[ $(uname -s) == Linux ]]"
       path: poetry.toml
+    ~/.netrc: netrc
