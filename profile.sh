@@ -16,7 +16,10 @@ if [ -d "$CUDA_PATH" ]; then
     export PATH="$CUDA_PATH:$PATH"
 fi
 
-# if running a different shell, switch to zsh
-if [ -z "$ZSH_VERSION" ]; then
-    exec zsh
+# if running a different shell, switch to zsh (if it exists)
+if [ -z "$ZSH_VERSION" ]; then # if not running zsh
+    if type zsh > /dev/null; then # check if zsh exists
+        export SHELL=`which zsh` # set the shell to the zsh in path
+        exec $SHELL # execute zsh
+    fi
 fi
