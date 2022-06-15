@@ -71,15 +71,10 @@ color_table(){
 }
 
 # setup conda
-if [ -f "/opt/homebrew/Caskroom/miniforge/base/etc/profile.d/conda.sh" ]; then
-        . "/opt/homebrew/Caskroom/miniforge/base/etc/profile.d/conda.sh"
+if [ -f "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh" ]; then
+    . "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh"
 elif [ -f "/epyc/users/jfc20/local/mambaforge/etc/profile.d/conda.sh" ]; then
-        . "/epyc/users/jfc20/local/mambaforge/etc/profile.d/conda.sh"
-fi
-
-# mamba
-if [ -f "/astro/store/epyc/users/jfc20/local/mambaforge/etc/profile.d/mamba.sh" ]; then
-    . "/astro/store/epyc/users/jfc20/local/mambaforge/etc/profile.d/mamba.sh"
+    . "/epyc/users/jfc20/local/mambaforge/etc/profile.d/conda.sh"
 fi
 
 # export zenodo token
