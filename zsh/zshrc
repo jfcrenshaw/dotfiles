@@ -86,3 +86,8 @@ fi
 if [ -f "$HOME/.zenodo_token" ]; then
     source "$HOME/.zenodo_token"
 fi
+
+# export zotero token
+if [ -f "$HOME/.zotero_token" ]; then
+    source "$HOME/.zotero_token"
+fi
