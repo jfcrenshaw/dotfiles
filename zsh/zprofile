@@ -1,1 +1,1 @@
-source ".dotfiles/profile.sh"
+source "$HOME/.dotfiles/profile.sh"
