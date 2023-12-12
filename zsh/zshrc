@@ -47,7 +47,7 @@ zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
+  export EDITOR='nano'
 else
   export EDITOR='code'
 fi
@@ -70,12 +70,17 @@ color_table(){
   echo " "
 }
 
-# setup conda
-if [ -f "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh" ]; then
-    . "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh"
-elif [ -f "/epyc/users/jfc20/local/mambaforge/etc/profile.d/conda.sh" ]; then
-    . "/epyc/users/jfc20/local/mambaforge/etc/profile.d/conda.sh"
-fi
+# setup conda/mamba
+for CONDA_PREFIX in \
+    "/opt/homebrew/Caskroom/mambaforge/base" \
+    "/astro/store/epyc/ssd/users/jfc20/mambaforge"
+do
+    if [ -f "$CONDA_PREFIX/etc/profile.d/conda.sh" ]; then
+        . "$CONDA_PREFIX/etc/profile.d/conda.sh"
+        . "$CONDA_PREFIX/etc/profile.d/mamba.sh"
+        break
+    fi
+done
 
 # export zenodo token
 if [ -f "$HOME/.zenodo_token" ]; then
@@ -86,3 +91,7 @@ fi
 if [ -f "$HOME/.zotero_token" ]; then
     source "$HOME/.zotero_token"
 fi
+
+# name my main working directories
+[ -d "/astro/store/epyc/users/jfc20" ] && hash -d work=/astro/store/epyc/users/jfc20
+[ -d "/astro/store/epyc/ssd/users/jfc20" ] && hash -d soft=/astro/store/epyc/ssd/users/jfc20
