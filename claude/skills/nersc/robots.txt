@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /cgi-bin/
+Disallow: /project/pdsf/ganglia/
+Disallow: /project/pdsf/ganglia_caine/
+Disallow: /archive/
+Disallow: /svn/
+Disallow: /*.fits
+Disallow: /*.nc
+Disallow: /*.h5
+Disallow: /*.exe
+Disallow: /*.gz
+Disallow: /*.dmg
+
