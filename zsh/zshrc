@@ -105,6 +105,19 @@ if [ -f "$HOME/.github_token" ]; then
     source "$HOME/.github_token"
 fi
 
-# name my main working directories
+# name my main working directories on epyc
 [ -d "/astro/store/epyc/users/jfc20" ] && hash -d work=/astro/store/epyc/users/jfc20
 [ -d "/astro/store/epyc/ssd/users/jfc20" ] && hash -d soft=/astro/store/epyc/ssd/users/jfc20
+
+# setup lbg-env on NERSC
+lbg_setup_file=/global/common/software/m1727/groups/WLSS/LBG/lbg-env/scripts/setup_lbg_env.sh
+if [ -f $lbg_setup_file ]; then
+    source $lbg_setup_file
+fi
+
+# VSCode integrated terminals don't inherit shell functions defined during setup
+# of the login shell. The following re-sources the Lmod init to fix this,
+# using the already-set $MODULESHOME.
+if [[ -n "$MODULESHOME" && "${+functions[module]}" -eq 0 ]]; then
+    source "$MODULESHOME/init/zsh"
+fi

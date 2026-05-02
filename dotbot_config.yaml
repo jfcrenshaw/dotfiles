@@ -11,12 +11,23 @@
     - [git submodule update --init --recursive, Installing submodules]
 
 - link:
-    ~/.zshrc: zsh/zshrc
+    ~/.zshrc:
+      if: '[[ -z "$NERSC_HOST" ]]'
+      path: zsh/zshrc
+    ~/.zshrc.ext:
+      if: '[[ -n "$NERSC_HOST" ]]'
+      path: zsh/zshrc
     ~/.zprofile:
-      if: "[[ $SHELL == *'zsh' ]]"
+      if: '[[ $SHELL == *zsh && -z "$NERSC_HOST" ]]'
+      path: zsh/zprofile
+    ~/.zprofile.ext:
+      if: '[[ $SHELL == *zsh && -n "$NERSC_HOST" ]]'
       path: zsh/zprofile
     ~/.profile:
-      if: "[[ $SHELL == *'bash' ]]"
+      if: '[[ $SHELL == *bash && -z "$NERSC_HOST" ]]'
+      path: profile.sh
+    ~/.profile.ext:
+      if: '[[ $SHELL == *bash && -n "$NERSC_HOST" ]]'
       path: profile.sh
     ~/.gitconfig: git.config
     ~/.ssh/config:
