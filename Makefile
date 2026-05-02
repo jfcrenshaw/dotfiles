@@ -21,18 +21,12 @@ install: dotfiles
 	@echo ""
 	@echo "Done installing! You must restart the terminal for changes to take effect." | tee -a make.log
 
-# install homebrew
-
-# install mac apps via homebrew
-
 # Run dotbot install script
 dotfiles:
 	@echo -e "- Running dotbot..." | tee -a make.log
 	@echo "" >> make.log
 	@./dotbot_install.sh 2>&1 >> make.log | tee -a make.log
 	@echo "" >> make.log
-
-# set MacOS settings
 
 # update everything
 update:
