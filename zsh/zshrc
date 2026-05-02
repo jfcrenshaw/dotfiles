@@ -21,10 +21,13 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # set the oh-my-zsh plugins to use
 plugins=(
-    poetry
     zsh-autosuggestions
     zsh-syntax-highlighting
+    history-substring-search
+    extract
+    bgnotify
 )
+(( $+commands[fzf] )) && plugins+=(zsh-interactive-cd)
 
 # load oh-my-zsh
 source $ZSH/oh-my-zsh.sh

@@ -15,30 +15,11 @@ $(shell date >> make.log)
 $(shell echo "--------------------------------------------------------" >> make.log)
 $(shell echo "" >> make.log)
 
-LOCAL_BIN := $$HOME/.local/bin
-POETRY := $(LOCAL_BIN)/poetry
-
 .PHONY: install dotfiles update uninstall
 
-install: $(POETRY) dotfiles
+install: dotfiles
 	@echo ""
 	@echo "Done installing! You must restart the terminal for changes to take effect." | tee -a make.log
-
-# install poetry
-# NOTE I NEED TO ADD POETRY CONFIG TO THE DOBOT FILES
-# IN PARTICULAR, I NEED TO SET IT TO USE CONDA ENVS
-$(POETRY):
-	@if [[ $$(uname -s) == Linux ]]; then\
-		if [ ! -f "$(POETRY)" ]; then\
-			echo -e "- Installing Poetry..." | tee -a make.log;\
-			echo "" >> make.log;\
-			curl -sSL https://install.python-poetry.org | python3 - 2>&1 >> make.log | tee -a make.log;\
-		else\
-			echo "- Poetry already installed. To update, run 'make update'." | tee -a make.log;\
-		fi;\
-	else\
-		echo "- Poetry will be installed by homebrew." | tee -a make.log;\
-	fi;\
 
 # install homebrew
 
@@ -55,10 +36,6 @@ dotfiles:
 
 # update everything
 update:
-	@echo "- Updating Poetry..." | tee -a make.log
-	@poetry self update 2>&1 >> make.log | tee -a make.log
-	@poetry completions zsh > zsh/plugins/poetry/_poetry
-	@echo "" >> make.log
 	@echo "- Updating Submodules..." | tee -a make.log
 	@git submodule update --init --remote 2>&1 >> make.log | tee -a make.log
 	@echo "" >> make.log
@@ -68,10 +45,6 @@ update:
 
 # uninstall everything
 uninstall:
-	@echo "- Uninstalling Poetry..." | tee -a make.log
-	@curl -sSL https://install.python-poetry.org | python3 - --uninstall 2>&1 >> make.log | tee -a make.log
-	@rm $(POETRY) 2>&1 >> make.log | tee -a make.log
-	@echo "" >> make.log
 	@echo "- Uninstalling dotfiles..." | tee -a make.log
 	@./dotbot_uninstall.py 2>&1 >> make.log | tee -a make.log
 	@echo "" >> make.log
