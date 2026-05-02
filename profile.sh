@@ -10,11 +10,12 @@ if [ -d "$LOCAL_BIN" ]; then
 fi
 
 # cuda path
-CUDA_PATH="/usr/local/cuda"
-if [ -d "$CUDA_PATH" ]; then
-    export LD_LIBRARY_PATH="$CUDA_PATH/lib64:$LD_LIBRARY_PATH"
-    export PATH="$CUDA_PATH:$PATH"
-fi
+unset LD_LIBRARY_PATH
+#CUDA_PATH="/usr/local/cuda"
+#if [ -d "$CUDA_PATH" ]; then
+#    export LD_LIBRARY_PATH="$CUDA_PATH/lib64:$LD_LIBRARY_PATH"
+#    export PATH="$CUDA_PATH:$PATH"
+#fi
 
 # if running a different shell, switch to zsh (if it exists)
 if [ -z "$ZSH_VERSION" ]; then # if not running zsh

@@ -92,6 +92,16 @@ if [ -f "$HOME/.zotero_token" ]; then
     source "$HOME/.zotero_token"
 fi
 
+# export overleaf credentials
+if [ -f "$HOME/.overleaf_credentials" ]; then
+    source "$HOME/.overleaf_credentials"
+fi
+
+# export github credentials
+if [ -f "$HOME/.github_token" ]; then
+    source "$HOME/.github_token"
+fi
+
 # name my main working directories
 [ -d "/astro/store/epyc/users/jfc20" ] && hash -d work=/astro/store/epyc/users/jfc20
 [ -d "/astro/store/epyc/ssd/users/jfc20" ] && hash -d soft=/astro/store/epyc/ssd/users/jfc20
