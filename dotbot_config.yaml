@@ -11,26 +11,30 @@
     - [git submodule update --init --recursive, Installing submodules]
 
 - link:
-    ~/.zshrc:
-      if: '[[ -z "$NERSC_HOST" ]]'
-      path: zsh/zshrc
-    ~/.zshrc.ext:
-      if: '[[ -n "$NERSC_HOST" ]]'
-      path: zsh/zshrc
-    ~/.zprofile:
-      if: '[[ $SHELL == *zsh && -z "$NERSC_HOST" ]]'
-      path: zsh/zprofile
-    ~/.zprofile.ext:
-      if: '[[ $SHELL == *zsh && -n "$NERSC_HOST" ]]'
-      path: zsh/zprofile
+    # Regular locations
     ~/.profile:
       if: '[[ $SHELL == *bash && -z "$NERSC_HOST" ]]'
       path: profile.sh
+    ~/.zprofile:
+      if: '[[ $SHELL == *zsh && -z "$NERSC_HOST" ]]'
+      path: zsh/zprofile
+    ~/.zshrc:
+      if: '[[ -z "$NERSC_HOST" ]]'
+      path: zsh/zshrc
+    # On NERSC
     ~/.profile.ext:
       if: '[[ $SHELL == *bash && -n "$NERSC_HOST" ]]'
       path: profile.sh
-    ~/.gitconfig: git.config
+    ~/.zprofile.ext:
+      if: '[[ $SHELL == *zsh && -n "$NERSC_HOST" ]]'
+      path: zsh/zprofile
+    ~/.zshrc.ext:
+      if: '[[ -n "$NERSC_HOST" ]]'
+      path: zsh/zshrc
+    # Only on my Mac
     ~/.ssh/config:
       if: "[[ $(uname -s) == Darwin ]]"
       path: ssh.config
+    # Other misc stuff
+    ~/.gitconfig: git.config
     ~/.netrc: netrc
