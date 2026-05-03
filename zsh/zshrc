@@ -105,19 +105,27 @@ if [ -f "$HOME/.github_token" ]; then
     source "$HOME/.github_token"
 fi
 
+# Epyc and Baldur
+# ---------------
 # name my main working directories on epyc
 [ -d "/astro/store/epyc/users/jfc20" ] && hash -d work=/astro/store/epyc/users/jfc20
 [ -d "/astro/store/epyc/ssd/users/jfc20" ] && hash -d soft=/astro/store/epyc/ssd/users/jfc20
 
-# setup lbg-env on NERSC
+# NERSC Perlmutter
+# ----------------
+# setup lbg-env
 lbg_setup_file=/global/common/software/m1727/groups/WLSS/LBG/lbg-env/scripts/setup_lbg_env.sh
 if [ -f $lbg_setup_file ]; then
     source $lbg_setup_file
 fi
 
+# name the PZ WG directory
+pz_dir=/global/cfs/cdirs/lsst/groups/PZ
+[ -d "$pz_dir" ] && alias pz='cd $pz_dir' && hash -d pz=$pz_dir
+
 # VSCode integrated terminals don't inherit shell functions defined during setup
 # of the login shell. The following re-sources the Lmod init to fix this,
-# using the already-set $MODULESHOME.
+# using the already-set $MODULESHOME. (this is for Perlmutter)
 if [[ -n "$MODULESHOME" && "${+functions[module]}" -eq 0 ]]; then
     source "$MODULESHOME/init/zsh"
 fi
