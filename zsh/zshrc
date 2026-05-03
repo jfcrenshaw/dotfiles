@@ -129,3 +129,14 @@ pz_dir=/global/cfs/cdirs/lsst/groups/PZ
 if [[ -n "$MODULESHOME" && "${+functions[module]}" -eq 0 ]]; then
     source "$MODULESHOME/init/zsh"
 fi
+
+# Background check: warn if dotfiles are behind remote (skipped on HPC systems)
+if [[ -z "$SLURM_JOB_ID" ]]; then
+    (
+        sleep 1
+        nc -z -w2 github.com 443 2>/dev/null || exit 0
+        git -C "$HOME/.dotfiles" fetch origin -q 2>/dev/null || exit 0
+        behind=$(git -C "$HOME/.dotfiles" rev-list HEAD..@{u} --count 2>/dev/null)
+        (( behind > 0 )) && print "\n\033[33mwarning: dotfiles are $behind commit(s) behind remote\033[0m"
+    ) &!
+fi
