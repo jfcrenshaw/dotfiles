@@ -39,7 +39,9 @@
       "Bash(git show*)",
       "Bash(git blame*)",
       "Bash(git branch*)",
-      "Bash(git remote*)"
+      "Bash(git remote*)",
+      "WebSearch",
+      "WebFetch"
     ]
   }
 }
