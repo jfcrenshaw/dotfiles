@@ -140,4 +140,6 @@ if [[ -n "$NERSC_HOST" ]]; then
     # name the PZ WG directory
     pz_dir=/global/cfs/cdirs/lsst/groups/PZ
     [ -d "$pz_dir" ] && alias pz='cd $pz_dir' && hash -d pz=$pz_dir
+    pz_user_dir=/global/cfs/cdirs/lsst/groups/PZ/users/jfc20
+    [ -d "$pz_user_dir" ] && alias pzu='cd $pz_user_dir' && hash -d pzu=$pz_user_dir
 fi

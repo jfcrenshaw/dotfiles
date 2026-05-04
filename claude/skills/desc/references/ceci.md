@@ -202,21 +202,35 @@ AnotherStage:
 
 ---
 
-## Aliasing (running a stage twice)
+## Aliasing (running a stage multiple times)
 
-To run the same stage class on different data, give each instance a unique `aliases` mapping that redirects its input/output tags:
+To run the same stage class on different data, give each instance a unique name via `classname:` and redirect its input/output tags via `aliases:`:
 
 ```yaml
 stages:
-  - name: PZEstimation
+  - name: PZEstimation_Sources      # unique DAG name
+    classname: PZEstimation         # actual registered class
     aliases:
-      photometry: source_photometry   # this instance reads "source_photometry"
+      photometry: source_photometry # this instance reads "source_photometry"
       pz_output:  source_pz
 
-  - name: PZEstimation
+  - name: PZEstimation_Lenses
+    classname: PZEstimation
     aliases:
-      photometry: lens_photometry     # second instance reads "lens_photometry"
+      photometry: lens_photometry
       pz_output:  lens_pz
+```
+
+And in the config file, use the **DAG name** (not the class name) as the block key, and include a `name:` key matching the DAG name (see gotcha 12):
+
+```yaml
+PZEstimation_Sources:
+  name: PZEstimation_Sources
+  param: value
+
+PZEstimation_Lenses:
+  name: PZEstimation_Lenses
+  param: other_value
 ```
 
 ---
@@ -289,3 +303,4 @@ python -m my_pipeline MyStage --input shear_catalog=/path/... --output result_ca
 9. **Memory monitor runs in a background thread.** Large in-memory operations may log false-alarm warnings; ignore unless it pages out.
 10. **`modules:` in pipeline YAML must be importable.** If the package isn't installed or on `PYTHONPATH`, ceci fails silently with a stage-not-found error rather than an import error.
 11. **`python_paths:` does NOT register stage classes — `modules:` does.** `python_paths:` only calls `sys.path.append()` for each entry. `modules:` calls `__import__()` on each name, which executes `__init__.py` and registers stage subclasses. Additionally, ceci automatically appends the current working directory to `sys.path` at startup, so `python_paths:` is never needed for local stages under the repo root. Symptom of the bug: `StageNotFound` even though the class exists — because `modules:` was omitted.
+12. **When using `classname:`, you must add `name: <DAG-name>` to each config block.** Ceci's `instance_name` property resolves via `self._configs.get("name", self.name)`. If the `name` key is absent from the config block, it falls back to the class's `name` attribute (e.g., `SpecSelection_DESI_Phy`), which doesn't match any key in `stage_execution_config` → `KeyError` at pipeline startup. Fix: add `name: DESISelectionELG` (matching the YAML stage `name:`) to each config block.
