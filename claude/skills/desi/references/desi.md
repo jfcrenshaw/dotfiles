@@ -1,6 +1,6 @@
 # DESI at NERSC
 
-DESI is a primary user community at NERSC; the `desi` and `desi_g` repos and the `/global/cfs/cdirs/desi` filesystem are dedicated to it. This file collects the conventions someone returning to DESI work after some time away will want.
+DESI is a major user community at NERSC; the `desi` and `desi_g` repos and the `/global/cfs/cdirs/desi` filesystem are dedicated to it. This file collects the conventions someone returning to DESI work after some time away will want.
 
 ## Loading the stack
 

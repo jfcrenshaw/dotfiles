@@ -1,37 +1,11 @@
-# User-level Claude Code guidance for `jfc20` at NERSC
+# Claude Code guidance for `jfc20`
 
-## Environment
-- **User**: jfc20 — postdoctoral fellow at Stanford University and SLAC National Lab.
-  Groups: `m1727`, `lsst`.
-- **System**: NERSC Perlmutter (`$NERSC_HOST=perlmutter`). Login nodes are
-  `login*`; compute nodes are `nidNNNNNN`. Claude sessions can run on either.
-- **How to tell**: `hostname` (`*login*` = login node) and `$SLURM_JOB_ID`
-  (set → inside an allocation). The skill ships `where_am_i.sh`.
-- **Scheduler**: Slurm. Don't run compute on login nodes; `salloc`/`sbatch`.
-- **Software**: Cray modules (`module avail`, `module load X`).
-- **Docs**: <https://docs.nersc.gov> · IRIS: <https://iris.nersc.gov> ·
-  JupyterHub: <https://jupyter.nersc.gov> · Status:
-  <https://www.nersc.gov/live-status/motd/>
+## Identity
 
-## Repos / accounts
-
-| Repo  | For | Default? |
-|---|---|---|
-| `m1727`   | CPU jobs                    | yes |
-| `m1727_g` | GPU jobs                    | (must pass `-A`) |
-
-## Filesystems — your personal layout
-
-| Path | Var | Use |
-|---|---|---|
-| `/global/homes/<l>/jfc20` | `$HOME` | Code, dotfiles, venvs (40 GB / 1M inodes) |
-| `/pscratch/sd/<l>/jfc20`  | `$PSCRATCH` / `$SCRATCH` | Big I/O, intermediates. Purged on inactivity (~8 wk) |
-| `/global/cfs/cdirs/<<PROJECT>>/users/jfc20` | — | Persistent project-shared output area |
-| `/global/common/software/<<PROJECT>>/envs/<<NAME>>` | — | Shared conda/venv envs (fast import) |
-| `$TMPDIR` (per-job) | `$TMPDIR` | Per-node ephemeral |
-
-Rule of thumb: **inputs from CFS, big I/O on `$PSCRATCH`, code in `$HOME`,
-keepers in `$DESI_ROOT/users/$USER` or `$CFS/<project>/users/$USER`.**
+- **User**: jfc20 — postdoctoral researcher at Stanford University and SLAC National Lab.
+  NERSC groups: `m1727` (CPU), `m1727_g` (GPU). LSST group: `lsst`.
+- **Development systems**: primarily NERSC Perlmutter (HPC, Slurm, `$NERSC_HOST=perlmutter`), also personal Mac laptop.
+  For anything cluster-related invoke `/nersc` — it covers job submission, filesystems, personal paths, accounts, and gotchas.
 
 ## Conventions / preferences
 
@@ -39,20 +13,6 @@ keepers in `$DESI_ROOT/users/$USER` or `$CFS/<project>/users/$USER`.**
 - **Markdown and LaTeX**: one sentence per line — never wrap a sentence across
   multiple lines, and never put two sentences on the same line.
 
-## Job-script defaults
-
-```bash
-#SBATCH -A <<REPO_CPU>>
-#SBATCH -C cpu
-#SBATCH -q regular
-#SBATCH -t 4:00:00
-#SBATCH -N 1
-#SBATCH -c 128
-#SBATCH --mem=0
-#SBATCH -o logs/slurm-%j.out
-#SBATCH -e logs/slurm-%j.err
-#SBATCH --open-mode=append
-```
 
 ## Working norms
 

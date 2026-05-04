@@ -1,6 +1,6 @@
 ---
 name: nersc
-description: How to work productively at NERSC. Covers Slurm job submission and QOS selection (salloc/sbatch/srun, --account, --qos, --constraint), filesystem strategy (HOME/CFS/PSCRATCH/COMMUNITY) and quotas, login-vs-compute discipline, NERSC-specific gotchas (mandatory --account, GPU repo `_g` suffix, $PSCRATCH purge policy, srun for everything that runs on compute, login-node CPU caps), module/conda environment setup, and DESI-spectroscopy conventions on top of all that. The current flagship system is **Perlmutter** (CPU = AMD Milan, GPU = 4× A100/node) and the examples are written for it; the durable conventions (account/repo model, IRIS, CFS, JupyterHub, $PSCRATCH purge) carry across system upgrades. Use this skill whenever `$NERSC_HOST` is set, the user runs Slurm commands, touches `/global/cfs`, `/pscratch`, `/global/common/software`, works with `module load`, or does anything DESI-related — even if NERSC / Perlmutter isn't named explicitly.
+description: How to work productively at NERSC. Covers Slurm job submission and QOS selection (salloc/sbatch/srun, --account, --qos, --constraint), filesystem strategy (HOME/CFS/PSCRATCH/COMMUNITY) and quotas, login-vs-compute discipline, NERSC-specific gotchas (mandatory --account, GPU repo `_g` suffix, $PSCRATCH purge policy, srun for everything that runs on compute, login-node CPU caps), and module/conda environment setup. The current flagship system is Perlmutter (CPU = AMD Milan, GPU = 4× A100/node); the durable conventions carry across system upgrades. This user's repos are m1727 (CPU default) and m1727_g (GPU). Use this skill whenever $NERSC_HOST is set, the user runs Slurm commands, touches /global/cfs or /pscratch, works with module load, or asks about NERSC-specific workflows.
 ---
 
 # Working at NERSC
@@ -9,7 +9,23 @@ You're helping a user at **NERSC**, the DOE supercomputing center at LBL. The cu
 
 Hard rules: **never run real work on a login node**, **always pass `--account=<repo>`** (Slurm jobs without it die), **prefer `$PSCRATCH` for big I/O**, and **use `srun`** to launch anything inside an allocation that should land on compute.
 
-Action-oriented; jump to the section that fits. Bundled scripts in `scripts/`, deeper reference in `references/`. DESI conventions are at the bottom — most users in this environment are doing DESI spectroscopy.
+Action-oriented; jump to the section that fits. Bundled scripts in `scripts/`, deeper reference in `references/`.
+
+## This user's accounts and paths
+
+| Repo | For |
+|---|---|
+| `m1727` | CPU jobs (default) |
+| `m1727_g` | GPU jobs — must pass `-A m1727_g` explicitly |
+
+| Path | Var | Use |
+|---|---|---|
+| `/global/homes/j/jfc20` | `$HOME` | Code, dotfiles, venvs (40 GB / 1M inodes) |
+| `/pscratch/sd/j/jfc20` | `$PSCRATCH` / `$SCRATCH` | Big I/O, intermediates — purged after ~8 wk inactivity |
+| `/global/cfs/cdirs/<project>/users/jfc20` | — | Persistent project-shared output |
+| `/global/common/software/<project>/envs/<name>` | — | Shared conda/venv envs (fast import) |
+
+Rule of thumb: inputs from CFS, big I/O on `$PSCRATCH`, code in `$HOME`, keepers in `$CFS/<project>/users/jfc20`.
 
 ## Where am I? (always do this first)
 
@@ -177,45 +193,14 @@ Patterns that work well on the cluster:
 
 See [`references/git-on-nersc.md`](references/git-on-nersc.md) for extended workflows.
 
-## DESI spectroscopy at NERSC
-
-Most users in this environment work on DESI. The DESI software stack is loaded via `module load desimodules/<tag>` (often already in `~/.bashrc`).
-
-Key environment (set by `desimodules`):
-
-| Var | Purpose |
-|---|---|
-| `DESI_ROOT=/global/cfs/cdirs/desi` | Top of the DESI CFS area |
-| `DESI_SPECTRO_DATA=$DESI_ROOT/spectro/data` | Raw nightly data, `NIGHT/EXPID/` |
-| `DESI_SPECTRO_REDUX=$DESI_ROOT/spectro/redux` | Processed productions (one subdir per `SPECPROD`) |
-| `SPECPROD` | Current production label — set per task |
-| `DESI_TARGET=$DESI_ROOT/target` | Targeting / fiberassign inputs |
-| `DESI_SURVEYOPS=$DESI_ROOT/survey/ops/surveyops/trunk` | Survey ops trunk |
-
-**Mountain releases** (alphabetical, internal): fuji → guadalupe → himalayas → iron → jura → kibo → loa → **matterhorn** (current internal as of 2026-04). Public-release map: `fuji`=EDR, `guadalupe`+`iron`=DR1, `kibo`+`loa`=DR2. `himalayas` and `jura` are frozen but never went public. `daily` is the rolling pipeline output. Verify the current frontier with `scripts/desi_prods.sh`.
-
-Layout under `$DESI_SPECTRO_REDUX/<SPECPROD>/`:
-- `exposures/NIGHT/EXPID/` — frame, sframe, cframe, sky, fiberflat per exposure.
-- `tiles/cumulative/TILEID/LASTNIGHT/` — coadded spectra and redshifts per tile.
-- `healpix/<survey>/<program>/<hp//100>/<hp>/` — healpix-coadded spectra (better for sample-level work).
-- `zcatalog/` — concatenated redshift catalogs.
-- `tilepix.fits`, `exposures-<SPECPROD>.fits`, `tiles-<SPECPROD>.fits` — top-level indices.
-
-For file/HDU/column specifics, the **authoritative reference** is the [DESI data model](https://desidatamodel.readthedocs.io/en/latest/). Use `desispec.io.read_spectra` / `read_frame` rather than hand-rolling FITS reads — it handles the multi-arm coadd structure and unit conventions correctly. `fitsio` (in the stack) is preferred over `astropy.io.fits` for big tables on Perlmutter.
-
-DESI compute repos: `desi` (CPU) and `desi_g` (GPU). DESI-internal output area: `$DESI_ROOT/users/$USER/` (group-writable, not purged). For sims/intermediate I/O, use `$PSCRATCH/desi/...`.
-
-More: [`references/desi.md`](references/desi.md).
-
 ## Bundled scripts
 
 Available under `scripts/`:
 
 | Script | What it does |
 |---|---|
-| `where_am_i.sh`     | Login vs compute, `$NERSC_HOST`, allocation state, available repos. Run first. |
-| `check_quota.sh`    | `myquota` plus CFS project quotas you have access to. Run **before** large writes. |
-| `desi_prods.sh`     | Most-recently-touched DESI productions and the current "mountain" release. Identifies what `SPECPROD` should plausibly be. |
+| `where_am_i.sh`  | Login vs compute, `$NERSC_HOST`, allocation state, available repos. Run first. |
+| `check_quota.sh` | `myquota` plus CFS project quotas you have access to. Run **before** large writes. |
 
 Run any of them directly: `scripts/check_quota.sh`. No dependencies beyond a NERSC shell.
 
