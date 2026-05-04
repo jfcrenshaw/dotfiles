@@ -7,6 +7,8 @@ Docs: <https://ceci.readthedocs.io/en/latest/>
 Repo: <https://github.com/LSSTDESC/ceci>
 Template: `cookiecutter https://github.com/LSSTDESC/pipeline-package-template`
 
+**Source indexed in qmd** — search `collection:"ceci"` for method signatures, class hierarchy, and config internals before consulting docs or training data.
+
 ---
 
 ## Core model

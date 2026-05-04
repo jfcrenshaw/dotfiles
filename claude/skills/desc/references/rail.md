@@ -8,6 +8,8 @@ Docs: <https://rail-hub.readthedocs.io/en/latest/>
 Umbrella repo: <https://github.com/LSSTDESC/rail>
 Sub-packages: rail_base, rail_astro_tools, rail_pipelines, rail_projects, rail_som, rail_sompz, rail_yaw, rail_lephare, rail_fsps, rail_dsps, …
 
+**Source indexed in qmd** — search `collection:"rail"` for stage class definitions, DataHandle subclasses, config options, and algorithm implementations before consulting docs or training data.
+
 ---
 
 ## Namespace architecture

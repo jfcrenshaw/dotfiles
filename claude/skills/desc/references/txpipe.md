@@ -8,6 +8,8 @@ Docs: <https://txpipe.readthedocs.io/en/latest/>
 Repo: <https://github.com/LSSTDESC/TXPipe>
 Examples: <https://github.com/LSSTDESC/TXPipe/tree/master/examples>
 
+**Source indexed in qmd** — search `collection:"txpipe"` for stage class definitions, inputs/outputs, and config options before consulting docs or training data.
+
 ---
 
 ## Pipeline phases and stage names
