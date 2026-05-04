@@ -124,19 +124,20 @@ fi
 
 # NERSC Perlmutter
 # ----------------
-# setup lbg-env
-lbg_setup_file=/global/common/software/m1727/groups/WLSS/LBG/lbg-env/scripts/setup_lbg_env.sh
-if [ -f $lbg_setup_file ]; then
-    source $lbg_setup_file
-fi
+if [[ -n "$NERSC_HOST" ]]; then
+    # VSCode integrated terminals don't inherit shell functions defined during setup
+    # of the login shell. The following re-sources the Lmod init to fix this,
+    # using the already-set $MODULESHOME. (this is for Perlmutter)
+    [[ -n "$MODULESHOME" && "${+functions[module]}" -eq 0 ]] && source "$MODULESHOME/init/zsh"
 
-# name the PZ WG directory
-pz_dir=/global/cfs/cdirs/lsst/groups/PZ
-[ -d "$pz_dir" ] && alias pz='cd $pz_dir' && hash -d pz=$pz_dir
+    # create an alias to launch a debug job
+    alias debug-job="salloc --nodes 1 --time 00:30:00 --account m1727 --qos debug --constraint cpu"
 
-# VSCode integrated terminals don't inherit shell functions defined during setup
-# of the login shell. The following re-sources the Lmod init to fix this,
-# using the already-set $MODULESHOME. (this is for Perlmutter)
-if [[ -n "$MODULESHOME" && "${+functions[module]}" -eq 0 ]]; then
-    source "$MODULESHOME/init/zsh"
+    # setup lbg-env
+    lbg_setup_file=/global/common/software/m1727/groups/WLSS/LBG/lbg-env/scripts/setup_lbg_env.sh
+    [ -f $lbg_setup_file ] && source $lbg_setup_file
+
+    # name the PZ WG directory
+    pz_dir=/global/cfs/cdirs/lsst/groups/PZ
+    [ -d "$pz_dir" ] && alias pz='cd $pz_dir' && hash -d pz=$pz_dir
 fi

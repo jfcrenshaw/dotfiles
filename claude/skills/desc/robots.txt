@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /*.fits
+Disallow: /*.fits.gz
+Disallow: /*.fits.fz
+Disallow: /*.hdf5
+Disallow: /*.h5
+Disallow: /*.parquet
+Disallow: /*.pq
+Disallow: /*.pkl
+Disallow: /*.npy
+Disallow: /*.npz
+Disallow: /*.nc
