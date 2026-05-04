@@ -33,6 +33,16 @@ Note that if `make update` updated any of the git submodules, you will also have
 
 At the end, restart the terminal for changes to take effect.
 
+## Claude Code and qmd
+
+This repo includes Claude Code configuration under `claude/` (symlinked into `~/.claude/`), including a global `CLAUDE.md`, `settings.json`, and custom skills.
+
+[qmd](https://github.com/tobil4sk/qmd) is a local search MCP server that gives Claude Code fast semantic and keyword search over indexed codebases and docs.
+It dramatically reduces context usage — Claude can search for what it needs rather than reading whole files — and is especially useful on NERSC where large repos live in shared software environments.
+
+The qmd index is machine-local (not in dotfiles), so it must be set up on each new machine.
+If you want to install qmd and re-index your collections on a new system, just ask Claude Code: *"install qmd and set up my collections"* and it will walk through the full setup using the instructions in `CLAUDE.md`.
+
 ## Uninstalling
 
 If you have already installed and would like to uninstall run `make uninstall`, then restart the terminal for changes to take effect. Note this will remove all of the dotfiles from your system, as well as uninstall all of the software installed by `make install`.
@@ -45,3 +55,6 @@ If you have uninstalled everything, you can optionally delete the dotfiles direc
 cd $HOME
 rm -rf .dotfiles
 ```
+
+Note none of this uninstalls qmd.
+You should ask Claude about that.
