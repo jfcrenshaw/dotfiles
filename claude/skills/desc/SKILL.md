@@ -20,6 +20,9 @@ For package-specific work, invoke the dedicated skill.
 | `ceci` | Pipeline framework: stage definition, YAML pipelines, MPI, file I/O | `/ceci` |
 | `TXPipe` | Main DESC 3×2pt pipeline: selection → maps → 2pt → covariance → theory | `/txpipe` |
 | `RAIL` | Photo-z framework: creation (catalog simulation), estimation, evaluation | `/rail` |
+| `pyccl` / CCL | Core Cosmology Library: theory predictions, tracers, angular/3D power spectra | `/ccl` |
+| `pymaster` / NaMaster | Pseudo-Cl estimator: NmtField/Workspace, mode-coupling, Gaussian covariance | `/namaster` |
+| `firecrown` | Likelihood framework: statistics, systematics, sacc I/O, CosmoSIS/NumCosmo connectors | `/firecrown` |
 
 ---
 
@@ -29,7 +32,10 @@ TXPipe and RAIL are both built on top of ceci — all their stages are ceci `Pip
 RAIL extends ceci with a `DataStore`/`DataHandle` pattern for managing in-memory data across stages.
 TXPipe uses RAIL stages for its photo-z steps (`PZEstimatorLens/Source`, `PZRailSummarizeLens/Source`).
 
-A typical DESC analysis pipeline flows: truth simulation → RAIL creation (degrade photometry) → RAIL estimation (photo-z) → TXPipe (2pt statistics).
+TXPipe uses NaMaster (`pymaster`) for Fourier-space power spectrum estimation and CCL (`pyccl`) for theory predictions in its theory stages.
+TXPipe outputs sacc files that Firecrown consumes for cosmological parameter inference; some TXPipe theory stages call Firecrown's `load_likelihood_from_script` directly.
+
+A typical DESC analysis pipeline flows: truth simulation → RAIL creation (degrade photometry) → RAIL estimation (photo-z) → TXPipe (2pt statistics) → Firecrown (parameter inference).
 
 ---
 

@@ -47,7 +47,8 @@ Read raw external data into the TXPipe HDF5 schema. One ingester per data source
 
 ### 2. Photo-z estimation (RAIL-based)
 
-TXPipe delegates photo-z to [RAIL](https://lsstdescrail.readthedocs.io/en/stable/) stages imported alongside TXPipe stages.
+TXPipe delegates photo-z entirely to RAIL stages (see `rail` skill for stage names and patterns).
+RAIL modules must be imported alongside txpipe:
 
 ```yaml
 modules:
@@ -56,21 +57,7 @@ modules:
   - rail.summarization
 ```
 
-| Stage | Purpose |
-|---|---|
-| `PZPrepareEstimatorLens` | Configure RAIL estimator for lens sample |
-| `PZEstimatorLens` | Run estimator → per-object photo-z PDFs |
-| `NZDirInformerLens` | Prior from training data (DIR method) |
-| `PZRailSummarizeLens` | Summarize PDFs → stacked n(z) per bin |
-| `PZPrepareEstimatorSource` | Same pipeline for source sample |
-| `PZEstimatorSource` | |
-| `NZDirInformerSource` | |
-| `PZRailSummarizeSource` | |
-| `TXTruePhotozStack` | Ground-truth n(z) from true redshifts (sims only) |
-| `TXPhotozPlot` | n(z) visualisation |
-| `PZRealizationsPlot` | Plot multiple n(z) realisations |
-
-Output type: `QPNOfZFile` — ensemble n(z) per tomographic bin. This is required input for all 2pt stages.
+Key constraint: all 2pt stages require `QPNOfZFile` (stacked n(z) per tomographic bin) from a `PZRailSummarize*` stage or `TXTruePhotozStack` (sims only) before they can run.
 
 ### 3. Sample selection & tomographic binning
 
@@ -112,22 +99,12 @@ All masks are HEALPix maps at a configurable `nside`. Mask `nside` must match th
 
 ### 6. Auxiliary maps & systematic weights
 
-**Auxiliary maps** (survey property maps fed to systematics stages):
+**Auxiliary maps** — survey property maps (PSF shape/size, depth, counts, flags) fed to systematics stages: `TXAuxiliarySourceMaps`, `TXAuxiliaryLensMaps`, `TXAuxiliarySSIMaps`.
+Use qmd to find which stage produces the map you need.
 
-| Stage | Outputs |
-|---|---|
-| `TXAuxiliarySourceMaps` | PSF g1/g2/T, object counts, lensing weights, flag maps |
-| `TXAuxiliaryLensMaps` | Bright-object count map, depth from S/N |
-| `TXAuxiliarySSIMaps` | SSI depth: measured, true, detection probability |
-
-**LSS systematic weights** (regression-based corrections for survey non-uniformity):
-
-| Stage | Method |
-|---|---|
-| `TXLSSWeights` | Wavelet-based regression |
-| `TXLSSWeightsLinBinned` | Linear regression on binned correlations |
-| `TXLSSWeightsLinPix` | Pixel-level linear regression |
-| `TXLSSWeightsUnit` | No weights (unit weights) |
+**LSS systematic weights** — regression-based corrections for survey non-uniformity.
+Four variants (wavelet, linear-binned, linear-pixel, unit/no-weights): `TXLSSWeights*`.
+Use `TXLSSWeightsUnit` to skip weighting entirely during development.
 
 ### 7. Map generation
 
@@ -163,15 +140,13 @@ All masks are HEALPix maps at a configurable `nside`. Mask `nside` must match th
 - γ_t(θ) — galaxy–galaxy lensing
 - w(θ) — galaxy clustering
 
-Key config:
+Gotcha-prone config keys (use qmd for full `config_options`):
 ```yaml
 TXTwoPoint:
-  min_sep: 2.5        # arcmin
-  max_sep: 250.0      # arcmin
-  n_theta_bins: 20
-  sep_units: arcmin
-  jackknife: true
-  use_randoms: true
+  nbins: 20              # NOT n_theta_bins — silently ignored
+  var_method: jackknife  # NOT "jackknife: true" — silently ignored
+  flip_g2: true          # default True; must align with TXTwoPointFourier (defaults False)
+  calcs: [0, 1, 2]       # 0=shear-shear 1=shear-pos 2=pos-pos; omit entries to skip
 ```
 
 Outputs: `twopoint_data_real_raw` (SACC), `twopoint_gamma_x` (SACC; B-mode)
@@ -183,16 +158,14 @@ Outputs: `twopoint_data_real_raw` (SACC), `twopoint_gamma_x` (SACC; B-mode)
 - C_ℓ^{κg} — galaxy–galaxy lensing power spectra
 - C_ℓ^{gg} — galaxy clustering power spectra
 
-Key config:
+Gotcha-prone config keys (use qmd for full `config_options`):
 ```yaml
 TXTwoPointFourier:
-  min_ell: 20
-  max_ell: 2000
-  n_ell_bins: 20
-  compute_shear_shear: true
-  compute_shear_pos: true
-  compute_pos_pos: true
-  deprojection_modes: 5   # # systematic modes to project out
+  ell_min: 100           # NOT min_ell — silently ignored
+  ell_max: 1500          # NOT max_ell
+  n_ell: 20              # NOT n_ell_bins
+  flip_g2: false         # default False; TXTwoPoint defaults True — align explicitly
+  deproject_syst_clustering: false  # true requires systmaps_clustering_dir
 ```
 
 Output: `twopoint_data_fourier` (SACC)

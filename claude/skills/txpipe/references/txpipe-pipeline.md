@@ -1,7 +1,7 @@
 # TXPipe — pipeline configuration and file types
 
 Reference for TXPipe's data file types, pipeline YAML structure, example pipelines, and common gotchas.
-For the full stage catalog (all 15 pipeline phases) see [`txpipe-stages.md`](txpipe-stages.md).
+For the full stage catalog see [`txpipe-stages.md`](txpipe-stages.md).
 
 Docs: <https://txpipe.readthedocs.io/en/latest/>
 Repo: <https://github.com/LSSTDESC/TXPipe>
@@ -35,6 +35,31 @@ Examples: <https://github.com/LSSTDESC/TXPipe/tree/master/examples>
 | `TomographyCatalog` | *(implicit in selectors)* | HDF5 | Photo-z bin edges |
 | `HDFFile` | `tracer_metadata` | HDF5 + YAML | Per-bin n_eff, sigma_e, response |
 
+### FiducialCosmology YAML format
+
+The `fiducial_cosmology` input is a YAML file read by `ccl_read_yaml()` in `utils/theory.py`.
+All keys below are required; set exactly one of `sigma8` / `A_s` and write `nan` for the other:
+
+```yaml
+Omega_c: 0.27
+Omega_b: 0.045
+h: 0.67
+n_s: 0.96
+sigma8: 0.8
+A_s: nan        # use "nan" (string) when specifying sigma8 instead
+Omega_k: 0.0
+Neff: 3.046
+w0: -1.0
+wa: 0.0
+bcm_log10Mc: 14.079
+bcm_etab: 0.5
+bcm_ks: 55.0
+mu_0: 0.0
+sigma_0: 0.0
+```
+
+Optional keys: `m_nu` (list of neutrino masses in eV), `z_mg`/`df_mg` (modified gravity z-dependent growth).
+
 ---
 
 ## Pipeline YAML structure
@@ -61,8 +86,8 @@ config: examples/metadetect/config.yml   # per-stage config
 
 stages:
   - name: TXSourceSelectorMetadetect
-  - name: TXSourceTomography
   - name: TXShearCalibration
+  - name: TXSourceTomography
   - name: TXTracerMetadata
   - name: TXAuxiliarySourceMaps
   - name: TXSimpleMask
@@ -87,43 +112,19 @@ inputs:
   fiducial_cosmology: data/cosmology.yml
 ```
 
-The per-stage config file (`config.yml`) contains a YAML dict keyed by stage name:
+The per-stage config file (`config.yml`) is a YAML dict keyed by stage name — each stage has its own sub-dict:
 
 ```yaml
-TXSourceSelectorMetadetect:
+TXSourceSelectorMetadetect:  # stage name as key
   snr_cut: 10.0
-  size_cut: 0.5
   T_cut: 0.3
-
-TXSourceTomography:
-  n_z: 5
-  zbin_edges: [0.0, 0.3, 0.5, 0.7, 0.9, 1.2]
-
-TXSimpleMask:
-  depth_cut: 24.5
-  bright_obj_cut: 10
 
 TXSourceMaps:
   pixelization: healpix
-  nside: 512
-  sparse: false
+  nside: 512               # must match mask nside everywhere
 
-TXTwoPoint:
-  min_sep: 2.5
-  max_sep: 250.0
-  n_theta_bins: 20
-  sep_units: arcmin
-  jackknife: true
-
-TXTwoPointFourier:
-  min_ell: 20
-  max_ell: 2000
-  n_ell_bins: 20
-  deprojection_modes: 5
-
-TXJackknifeCenters:
-  npatch: 20
-  every_nth: 100
+# Gotcha-prone config keys for TXTwoPoint / TXTwoPointFourier:
+# see txpipe-stages.md §8 for full config_options
 ```
 
 ---
@@ -149,7 +150,9 @@ The `metadetect` example is the canonical reference; when in doubt, compare agai
 
 ## Common gotchas
 
-1. **Use the right selector for your catalog type.** `TXSourceSelectorMetadetect` vs `TXSourceSelectorMetacal` read different column names and apply different response matrix logic. Using the wrong one gives a silently corrupted shear catalog.
+1. **Use the right stage for your data source.** Both ingesters and selectors are source-specific and fail silently with wrong data:
+   - *Ingesters*: `TXIngestDataPreview02` ≠ `TXIngestDataPreview1`; Butler schema changes between LSST Data Previews; the wrong ingester fails at column-access time with opaque messages.
+   - *Selectors*: `TXSourceSelectorMetadetect` vs `TXSourceSelectorMetacal` read different column names and apply different response matrix logic; the wrong one silently corrupts the shear catalog.
 
 2. **Calibration must precede tomography and maps.** `TXShearCalibration` → `TXSourceTomography` → `TXSourceMaps`. Reversing this drops the calibration corrections.
 
@@ -171,10 +174,12 @@ The `metadetect` example is the canonical reference; when in doubt, compare agai
 
 11. **Noise map realisations feed covariance, not just diagnostics.** Without `TXSourceNoiseMaps` / `TXLensNoiseMaps`, the covariance stages will either fail or underestimate variance (cosmic-variance-only). Always include them.
 
-12. **`module: txpipe` in pipeline YAML must be importable.** If TXPipe is not in the environment, ceci raises a stage-not-found error rather than an import error. Always activate the DESC conda env before running.
+12. **`txpipe` must be listed under `modules:` in the pipeline YAML and be importable.** If TXPipe is not in the environment, ceci raises a stage-not-found error rather than an import error. Always activate the DESC conda env before running.
 
-13. **LSST DP versions have dedicated ingesters.** `TXIngestDataPreview02` ≠ `TXIngestDataPreview1`. Butler schema changes between Data Previews; the wrong ingester fails at column-access time with opaque messages.
+13. **Kaiser–Squires (`TXConvergenceMaps`) requires calibrated g1/g2.** Passing uncalibrated or mis-formatted shear produces a convergence map that looks reasonable but is quantitatively wrong. Run after `TXShearCalibration`.
 
-14. **Kaiser–Squires (`TXConvergenceMaps`) requires calibrated g1/g2.** Passing uncalibrated or mis-formatted shear produces a convergence map that looks reasonable but is quantitatively wrong. Run after `TXShearCalibration`.
+14. **PSF diagnostic columns are catalog-type-specific.** Metacal uses `psf_T_mean`; MetaDetect uses `T_model`; Lensfit uses different conventions. `TXPSFDiagnostics` and `TXRoweStatistics` must be configured for the right catalog type or will silently produce empty/wrong plots.
 
-15. **PSF diagnostic columns are catalog-type-specific.** Metacal uses `psf_T_mean`; MetaDetect uses `T_model`; Lensfit uses different conventions. `TXPSFDiagnostics` and `TXRoweStatistics` must be configured for the right catalog type or will silently produce empty/wrong plots.
+15. **`flip_g2` defaults differ between TXTwoPoint and TXTwoPointFourier.** `TXTwoPoint` (TreeCorr) defaults to `flip_g2: true`; `TXTwoPointFourier` (NaMaster) defaults to `flip_g2: false`. If you run both without explicitly setting `flip_g2` in both, real-space and Fourier-space shear-position correlations will use opposite g2 sign conventions, making cross-checks between the two meaningless. Always set `flip_g2` explicitly and consistently in both stages.
+
+16. **Extensions are not auto-imported.** The `txpipe` module only imports core stages. Extension stages (CMB lensing: `TXIngestQuaia`, `TXIngestPlanckLensingMaps`, `TXTwoPointFourierCMBLensingCrossDensity`) live under `txpipe/extensions/` and must be explicitly added to `modules:` in the pipeline YAML. Check the extension's `__init__.py` for the exact importable module path (the directory name uses hyphens, so it is not directly importable as `txpipe.extensions.cmb-lensing`). Omitting the import causes a stage-not-found error at runtime.

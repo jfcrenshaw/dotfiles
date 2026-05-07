@@ -9,6 +9,7 @@ You're helping a user work with TXPipe, the main DESC analysis workhorse.
 TXPipe processes shear and photometric catalogs through sample selection, map generation, two-point measurements (real and Fourier space), covariance estimation, theory comparison, and diagnostics.
 All stages are ceci `PipelineStage` subclasses; for ceci conventions see the `ceci` skill.
 For NERSC job submission, see the `nersc` skill.
+Key library dependencies: NaMaster (`namaster` skill) for Fourier C_ℓ measurements and covariance; CCL (`ccl` skill) for theory predictions; Firecrown (`firecrown` skill) is used internally by theory/blinding stages and consumes TXPipe's sacc output for parameter inference.
 
 ## Pipeline phases (in order)
 
@@ -20,9 +21,9 @@ For NERSC job submission, see the `nersc` skill.
 6. **Maps** — `TXSourceMaps`, `TXLensMaps`, `TXAuxiliarySourceMaps/LensMaps`, `TXLSSWeights`
 7. **Noise maps** — `TXSourceNoiseMaps` (~30 realisations), `TXLensNoiseMaps` (~5); required for covariance
 8. **Two-point real** — `TXTwoPoint` (TreeCorr; ξ±, γ_t, w(θ)); uses `TXJackknifeCenters` for jackknife cov
-9. **Two-point Fourier** — `TXTwoPointFourier` (NaMaster; C_ℓ for shear-shear, shear-pos, pos-pos)
-10. **Covariance** — `TXFourierNamasterCovariance` / `TXRealNamasterCovariance` (expensive; use `TXFourierGaussianCovariance` for quick tests)
-11. **Theory & blinding** — `TXTwoPointTheoryReal/Fourier` (CCL); `TXBlinding` (secret seed, deterministic)
+9. **Two-point Fourier** — `TXTwoPointFourier` (NaMaster; C_ℓ for shear-shear, shear-pos, pos-pos; see `namaster` skill)
+10. **Covariance** — `TXFourierNamasterCovariance` / `TXRealNamasterCovariance` (expensive; use `TXFourierGaussianCovariance` for quick tests; see `namaster` skill)
+11. **Theory & blinding** — `TXTwoPointTheoryReal/Fourier` (CCL; see `ccl` skill); `TXBlinding` (Firecrown internally; see `firecrown` skill)
 12. **Diagnostics** — `TXPSFDiagnostics`, `TXRoweStatistics`, `TXTauStatistics`, `TXSourceDiagnosticPlots`, `TXTwoPointPlots`
 
 The `examples/metadetect/` pipeline is the canonical full-pipeline reference.
@@ -31,5 +32,5 @@ The `examples/metadetect/` pipeline is the canonical full-pipeline reference.
 
 | Topic | Reference |
 |---|---|
-| All 15 pipeline phases and stage names | [`references/txpipe-stages.md`](references/txpipe-stages.md) |
+| Pipeline phases and stage names | [`references/txpipe-stages.md`](references/txpipe-stages.md) |
 | Key file types, pipeline YAML structure, example pipelines, gotchas | [`references/txpipe-pipeline.md`](references/txpipe-pipeline.md) |
