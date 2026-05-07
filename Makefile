@@ -5,7 +5,8 @@ ONESHELL:
 MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 
-# start the log file
+# start the log file (top-level invocation only)
+ifeq ($(MAKELEVEL),0)
 $(info )
 $(info Appending stdout to ./make.log)
 $(info )
@@ -14,6 +15,7 @@ $(shell echo "--------------------------------------------------------" >> make.
 $(shell date >> make.log)
 $(shell echo "--------------------------------------------------------" >> make.log)
 $(shell echo "" >> make.log)
+endif
 
 .PHONY: install dotfiles update uninstall sync-desc-skills
 
@@ -48,7 +50,7 @@ update:
 	@echo "- Updating Submodules..." | tee -a make.log
 	@git submodule update --init --remote 2>&1 >> make.log | tee -a make.log
 	@echo "" >> make.log
-	@$(MAKE) sync-desc-skills
+	@$(MAKE) --no-print-directory sync-desc-skills
 	@echo -e "\nDone updating!" | tee -a make.log
 	@echo "For changes to the git submodules to persist, you must commit the changes to the repo." | tee -a make.log
 	@echo "Afterwards, you must restart the terminal for changes to take effect." | tee -a make.log
