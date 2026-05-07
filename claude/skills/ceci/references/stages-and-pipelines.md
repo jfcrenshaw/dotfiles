@@ -11,6 +11,22 @@ Template: `cookiecutter https://github.com/LSSTDESC/pipeline-package-template`
 
 ---
 
+## Contents
+
+- [Core model](#core-model)
+- [Defining a stage](#defining-a-stage)
+- [File types](#file-types)
+- [Parallel iteration helpers](#parallel-iteration-helpers)
+- [MPI patterns](#mpi-patterns)
+- [Pipeline YAML](#pipeline-yaml)
+- [Aliasing (running a stage multiple times)](#aliasing-running-a-stage-multiple-times)
+- [CLI patterns](#cli-patterns)
+- [Launchers](#launchers)
+- [Package structure](#package-structure)
+- [Common gotchas](#common-gotchas)
+
+---
+
 ## Core model
 
 A **stage** is a Python class with declared inputs, outputs, config, and a `run()` method.

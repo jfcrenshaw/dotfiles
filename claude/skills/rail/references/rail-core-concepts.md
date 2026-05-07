@@ -12,6 +12,20 @@ Sub-packages: rail_base, rail_astro_tools, rail_pipelines, rail_projects, rail_s
 
 ---
 
+## Contents
+
+- [Namespace architecture](#namespace-architecture)
+- [Three main modules](#three-main-modules)
+- [RailStage — how it extends PipelineStage](#railstage--how-it-extends-pipelinestage)
+- [DataHandle types](#datahandle-types)
+- [Base class hierarchy (creation module)](#base-class-hierarchy-creation-module)
+- [Estimation module (brief)](#estimation-module-brief)
+- [Building a ceci pipeline with RAIL stages](#building-a-ceci-pipeline-with-rail-stages)
+- [Important packages](#important-packages)
+- [Common gotchas](#common-gotchas)
+
+---
+
 ## Namespace architecture
 
 RAIL is distributed across many repos that all contribute to the `rail.*` namespace via setuptools entry-points.

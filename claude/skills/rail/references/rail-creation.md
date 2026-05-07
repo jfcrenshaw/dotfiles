@@ -14,7 +14,23 @@ truth catalog (Parquet/HDF5)
   → photo-z estimation        (CatInformer → CatEstimator → CatSummarizer)
 ```
 
-All stages are `RailStage` (ceci `PipelineStage`) subclasses. See [`rail.md`](rail.md) for the framework.
+All stages are `RailStage` (ceci `PipelineStage`) subclasses. See [`rail-core-concepts.md`](rail-core-concepts.md) for the framework.
+
+---
+
+## Contents
+
+- [Stage reference](#stage-reference)
+  - [1. Column pre-selection — QuantityCut](#1-column-pre-selection--quantitycut)
+  - [2. Galactic dust reddening — Reddener](#2-galactic-dust-reddening--reddener)
+  - [3. Photometric errors](#3-photometric-errors)
+  - [4. De-reddening — Dereddener](#4-de-reddening--dereddener)
+  - [5. Quality / SNR cuts — QuantityCut (second pass)](#5-quality--snr-cuts--quantitycut-second-pass)
+  - [6. Spectroscopic selection](#6-spectroscopic-selection)
+- [Column naming conventions](#column-naming-conventions)
+- [Other useful creation stages](#other-useful-creation-stages)
+- [Full pipeline YAML skeleton](#full-pipeline-yaml-skeleton)
+- [Gotchas](#gotchas)
 
 ---
 
@@ -75,13 +91,27 @@ The stage does not add an EBV column — it directly modifies the magnitude colu
 
 Two complementary approaches; often both are useful:
 
-#### 3a. `LSSTErrorModel` (simple, non-spatial)
+#### 3a. `LSSTErrorModel` and friends (simple, non-spatial)
 
-**Module:** `rail.creation.degraders.photometric_errors.LSSTErrorModel`
-**Base class:** `Noisifier` → `PhotoErrorModel`
+**Module:** `rail.creation.degraders.photometric_errors`
+**Base class:** `PhotoErrorModel(Noisifier)` — thin wrapper around the `photerr` package
 
-Applies magnitude-dependent Gaussian noise following the LSST error model (Ivezić et al. 2019; Crenshaw et al. 2024).
-Does not vary spatially — assumes uniform survey depth. Use when you want fast, simple errors or when spatial variation is handled separately.
+Applies magnitude-dependent Gaussian noise; does not vary spatially.
+All models use identical config patterns — only the class name changes for the survey.
+
+| Class | Survey / tier |
+|---|---|
+| `LSSTErrorModel` | LSST (Ivezić et al. 2019; Crenshaw et al. 2024) |
+| `RomanErrorModel` | Roman (baseline) |
+| `RomanWideErrorModel` | Roman wide tier |
+| `RomanMediumErrorModel` | Roman medium tier |
+| `RomanDeepErrorModel` | Roman deep tier |
+| `RomanUltraDeepErrorModel` | Roman ultra-deep tier |
+| `EuclidErrorModel` | Euclid (baseline) |
+| `EuclidWideErrorModel` | Euclid wide tier |
+| `EuclidDeepErrorModel` | Euclid deep tier |
+
+Use `LSSTErrorModel` when you want fast, simple errors or when spatial variation is handled separately.
 
 ```yaml
 LSSTErrorModel:
@@ -271,12 +301,13 @@ Use `NaN` for non-detections; do not use sentinel magnitudes like 99 or −9.
 | Stage | Module | Purpose |
 |---|---|---|
 | `IGMExtinctionModel` | `rail.creation.degraders.lya_degrader` | IGM/Lyα absorption for z > 1.5 (degrades u/g bands) |
-| `LineConfusion` | `rail.creation.degraders.spectroscopic_degraders` | Spectroscopic line misidentification |
+| `LineConfusion` | `rail.creation.degraders.spectroscopic_degraders` | Spectroscopic line misidentification (wavelength-swap model) |
 | `InvRedshiftIncompleteness` | same | Redshift-dependent spectroscopic incompleteness |
-| `UnrecBlModel` | `rail.creation.degraders.unrec_bl_model` | Unresolved blending effects |
-| `AddColumnOfRandom` | `rail.creation.degraders.add_column` | Add noise column for testing |
-| `GridSelection` | `rail.creation.degraders.quantity_cuts` | Spatially-structured subsample selection |
-| `SOMSpecSelector` | `rail.creation.degraders.som_degrader` | SOM-based spec sample selection |
+| `GaussianSkewtScatterSelector` | `rail.creation.degraders.gaussian_skewt_scatter_selector` | Adds mock `photoz_mock` column with Gaussian core + skew-t tail scatter, parameterized by mag_i and z bins; does not remove rows |
+| `UnrecBlModel` | `rail.creation.degraders.unrec_bl_model` | Unresolved blending effects (requires `FoFCatalogMatching`) |
+| `AddColumnOfRandom` | `rail.creation.degraders.addRandom` | Add random noise column for testing |
+| `GridSelection` | `rail.creation.degraders.grid_selection` | Spatially-structured subsample selection |
+| `SOMSpecSelector` | `rail.creation.degraders.specz_som` | SOM-based spec sample selection |
 
 ---
 

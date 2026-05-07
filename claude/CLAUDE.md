@@ -17,7 +17,7 @@
 ## Working norms
 
 - **Durable knowledge**: when I learn repo-specific workflow or preference
-  information, add it to that repo's `AGENTS.md`. If a preference likely
+  information, add it to that repo's `CLAUDE.md`. If a preference likely
   applies across repos, explicitly flag it as a candidate for global custom
   instructions (this file).
 - **Blocked by missing tooling**: if a missing tool, package, or environment
@@ -59,8 +59,9 @@
   `query` for semantic or multi-concept questions,
   `get` for retrieving a specific file by path,
   `multi_get` for batch retrieval by glob.
-  Fall back to `Read`, `Bash(grep*)`, or `Bash(ls/find)` only when qmd returns insufficient results or the file is not yet indexed.
-- **When in doubt, ask.** One clarifying turn can save many context-heavy ones.
+  Indexed collections: `lbg-pipelines`, `claude`, `txpipe`, `ceci`, `rail`.
+  Fall back to `Read`, `Bash(grep*)`, or `Bash(ls/find)` only when qmd returns insufficient results or the file isn't indexed.
+  For installation, collection management, and MCP registration: invoke `/qmd`.
 
 ## Dotfiles-managed configuration
 
@@ -68,36 +69,9 @@ Symlinks: `~/.claude/{CLAUDE.md,settings.json,skills/}` → `~/.dotfiles/claude/
 New files under `~/.claude/`: put in dotfiles if it's a skill or persistent preference; leave in `~/.claude/` for credentials, cache, and session data.
 `~/.claude.json` is NOT in dotfiles — volatile state; re-run `claude mcp add` on each new machine.
 
-## qmd — local search MCP server
-
-**Always use qmd first** — before Read, grep, or ls/find.
-Fall back only when qmd returns insufficient results or the file isn't indexed.
-
-| Tool | Use |
-|---|---|
-| `mcp__qmd__query` | Hybrid BM25 + semantic search — best for most questions |
-| `mcp__qmd__get` | Single file by path (`qmd://collection/rel/path`) |
-| `mcp__qmd__multi_get` | Batch fetch by glob or comma-separated paths |
-| `mcp__qmd__status` | Show indexed collections and doc counts |
-
-Indexed collections: `lbg-pipelines`, `claude`, `txpipe`, `ceci`, `rail`.
-For installation, collection management, and MCP registration details: invoke `/qmd`.
-
 ## Gotchas I keep stepping in
 
 ### qmd: hyphens in `vec`/`hyde` queries trigger negation parser
 
-The qmd `vec` and `hyde` search types use a query parser that interprets `-word`
-as "exclude this term."
-Any hyphenated word (e.g. `lbg-pipelines`, `mock-desi`) in a `vec` or `hyde`
-query will be rejected with:
-
-> Structured search (vec): Negation (-term) is not supported in vec/hyde queries.
-
-Fixes:
-- **`vec`/`hyde`**: rephrase without the hyphen (e.g. "photo redshift" instead of
-  "photo-z"). Semantic search preserves meaning so the exact term isn't needed.
-- **`lex`**: wrap the hyphenated term in quotes (`"photo-z"`, `"lbg-pipelines"`)
-  so the parser treats it as an exact phrase rather than negation.
-
-Negation (`-term`) is only valid in `lex` queries, and only outside quotes.
+Any hyphenated word in a `vec`/`hyde` query is rejected — the parser reads `-word` as "exclude term."
+Fix: rephrase without hyphens for `vec`/`hyde` (`"photo z"` not `"photo-z"`); for `lex`, wrap in quotes (`"photo-z"`).

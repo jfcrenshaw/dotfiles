@@ -5,9 +5,8 @@ description: How to install, configure, and manage the qmd local search MCP serv
 
 # qmd — local search MCP server
 
-qmd is installed at `~/.local/bin/qmd` (v2.1.0 as of 2026-05).
-Node.js is installed as a standalone tarball at `~/.local/node-v25.9.0-linux-x64/`
-with `node`/`npm`/`npx` symlinked into `~/.local/bin/`.
+qmd is installed at `~/.local/bin/qmd`.
+Node.js is installed as a standalone tarball at `~/.local/node-*/` with `node`/`npm`/`npx` symlinked into `~/.local/bin/`.
 The index lives at `~/.cache/qmd/index.sqlite` (local to each machine — not in dotfiles).
 
 ## How Claude Code MCP servers actually work
@@ -36,6 +35,21 @@ If a local server shows as connected there but the `mcp__*` tools are still abse
 | `mcp__qmd__get` | Retrieve a single file by path (`qmd://collection/rel/path`) |
 | `mcp__qmd__multi_get` | Batch fetch by glob or comma-separated paths |
 | `mcp__qmd__status` | Show indexed collections and document counts |
+
+### Query gotcha: hyphens in `vec`/`hyde` queries trigger negation parser
+
+The `vec` and `hyde` query types interpret `-word` as "exclude this term."
+Any hyphenated word (e.g. `rail-pipelines`, `photo-z`, `lbg-pipelines`) in a `vec` or `hyde` query
+will be rejected with: *Structured search (vec): Negation (-term) is not supported in vec/hyde queries.*
+
+**Before submitting any `vec` or `hyde` query: scan for hyphens and rephrase.**
+
+| Type | Fix |
+|---|---|
+| `vec` / `hyde` | Remove the hyphen or rephrase: `"photo-z"` → `"photo z"`, `"rail-pipelines"` → `"rail pipelines"` |
+| `lex` | Wrap in quotes: `"photo-z"` — quoted phrases are treated literally, not as negation |
+
+Negation (`-term`) is only valid in unquoted `lex` queries.
 
 ## Collection management
 
@@ -78,9 +92,11 @@ qmd status
 
 ```bash
 # 1. Install Node.js (standalone tarball — no module system needed on NERSC)
-curl -fSL "https://nodejs.org/dist/v25.9.0/node-v25.9.0-linux-x64.tar.gz" -o /tmp/node.tar.gz
+# Get the current LTS tarball URL from https://nodejs.org/en/download and update NODE_VER:
+NODE_VER=v25.9.0
+curl -fSL "https://nodejs.org/dist/${NODE_VER}/node-${NODE_VER}-linux-x64.tar.gz" -o /tmp/node.tar.gz
 tar -xf /tmp/node.tar.gz -C ~/.local/
-ln -sf ~/.local/node-v25.9.0-linux-x64/bin/{node,npm,npx} ~/.local/bin/
+ln -sf ~/.local/node-${NODE_VER}-linux-x64/bin/{node,npm,npx} ~/.local/bin/
 rm /tmp/node.tar.gz
 
 # 2. Install qmd (use lbg-env Python for node-gyp to avoid Python 3.6 system default)

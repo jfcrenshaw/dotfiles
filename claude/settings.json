@@ -24,6 +24,7 @@
       "Bash(pwd*)",
       "Bash(date*)",
       "Bash(env*)",
+      "Bash(jq*)",
       "Bash(sort*)",
       "Bash(uniq*)",
       "Bash(stat*)",

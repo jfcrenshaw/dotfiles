@@ -97,7 +97,7 @@ For large zcatalog tables, prefer `fitsio` over `astropy.io.fits` — significan
 
 ## Deep reference
 
-Full loading instructions, env vars, productions table, file layout details, Python I/O patterns, GPU pipeline, and output conventions: [`references/desi.md`](references/desi.md)
+Full loading instructions, env vars, productions table, file layout details, Python I/O patterns, GPU pipeline, and output conventions: [`references/desi-at-nersc.md`](references/desi-at-nersc.md)
 
 ## Links
 
