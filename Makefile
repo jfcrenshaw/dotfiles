@@ -23,6 +23,9 @@ install: dotfiles sync-desc-skills
 
 # Run dotbot install script
 dotfiles:
+	@echo "- Initializing submodules..." | tee -a make.log
+	@git submodule update --init --recursive 2>&1 >> make.log | tee -a make.log
+	@echo "" >> make.log
 	@echo -e "- Running dotbot..." | tee -a make.log
 	@echo "" >> make.log
 	@./dotbot_install.sh 2>&1 >> make.log | tee -a make.log
