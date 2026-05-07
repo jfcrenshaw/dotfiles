@@ -15,9 +15,9 @@ $(shell date >> make.log)
 $(shell echo "--------------------------------------------------------" >> make.log)
 $(shell echo "" >> make.log)
 
-.PHONY: install dotfiles update uninstall
+.PHONY: install dotfiles update uninstall sync-desc-skills
 
-install: dotfiles
+install: dotfiles sync-desc-skills
 	@echo ""
 	@echo "Done installing! You must restart the terminal for changes to take effect." | tee -a make.log
 
@@ -28,11 +28,24 @@ dotfiles:
 	@./dotbot_install.sh 2>&1 >> make.log | tee -a make.log
 	@echo "" >> make.log
 
+# Symlink any DESC skills not yet linked into claude/skills/
+sync-desc-skills:
+	@echo "- Syncing DESC skill symlinks..." | tee -a make.log
+	@for dir in claude/claude-desc-skills/*/; do \
+	    [[ -d "$$dir" ]] || continue; \
+	    skill=$$(basename "$$dir"); \
+	    [[ -e "claude/skills/$$skill" ]] && continue; \
+	    ln -s "../claude-desc-skills/$$skill" "claude/skills/$$skill"; \
+	    echo "  Linked new DESC skill: $$skill" | tee -a make.log; \
+	done
+	@echo "" >> make.log
+
 # update everything
 update:
 	@echo "- Updating Submodules..." | tee -a make.log
 	@git submodule update --init --remote 2>&1 >> make.log | tee -a make.log
 	@echo "" >> make.log
+	@$(MAKE) sync-desc-skills
 	@echo -e "\nDone updating!" | tee -a make.log
 	@echo "For changes to the git submodules to persist, you must commit the changes to the repo." | tee -a make.log
 	@echo "Afterwards, you must restart the terminal for changes to take effect." | tee -a make.log
