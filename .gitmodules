@@ -22,3 +22,6 @@
 	path = zsh/themes/powerlevel10k
 	url = git@github.com:romkatv/powerlevel10k.git
 	ignore = dirty
+[submodule "claude/claude-desc-skills"]
+	path = claude/claude-desc-skills
+	url = git@github.com:jfcrenshaw/claude-desc-skills.git
