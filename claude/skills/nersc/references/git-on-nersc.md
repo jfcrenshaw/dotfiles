@@ -1,6 +1,6 @@
 # git and GitHub at NERSC
 
-Cluster-side `git` is a high-leverage place to use Claude — many DESI/cosmology users only `git` on their laptops, but the cluster has the actual data, the actual environment, and far more compute. This file covers the setup and patterns.
+Cluster-side `git` is a high-leverage place to use Claude — many DESC/cosmology users only `git` on their laptops, but the cluster has the actual data, the actual environment, and far more compute. This file covers the setup and patterns.
 
 ## One-time setup
 
@@ -49,23 +49,5 @@ These actions affect shared state and Claude should confirm before running, even
 
 For ordinary commits, branch creates, fetches, and PR drafts: just go.
 
-## DESI-specific: the `desihub` orgs
-
-DESI source lives at <https://github.com/desihub>. The repos you'll touch most:
-
-- `desispec` — pipeline.
-- `desitarget` — targeting.
-- `redrock` — redshift fitting.
-- `desisim` — sims.
-- `desisurvey` — survey strategy.
-- `desidatamodel` — file specs.
-
-`module load desimodules/master` points at *installed* copies of these. For active development, clone your own and add to `PYTHONPATH` ahead of the module versions:
-
-```bash
-mkdir -p ~/dev && cd ~/dev
-gh repo clone desihub/desispec
-export PYTHONPATH=$HOME/dev/desispec/py:$PYTHONPATH
-```
 
 Mind the `PYTHONPATH` gotcha — the same prepend that helps you here will silently break unrelated envs later.

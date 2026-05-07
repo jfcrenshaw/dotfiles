@@ -1,6 +1,6 @@
 ---
 name: nersc
-description: How to work productively at NERSC. Covers Slurm job submission and QOS selection (salloc/sbatch/srun, --account, --qos, --constraint), filesystem strategy (HOME/CFS/PSCRATCH/COMMUNITY) and quotas, login-vs-compute discipline, NERSC-specific gotchas (mandatory --account, GPU repo `_g` suffix, $PSCRATCH purge policy, srun for everything that runs on compute, login-node CPU caps), and module/conda environment setup. The current flagship system is Perlmutter (CPU = AMD Milan, GPU = 4× A100/node); the durable conventions carry across system upgrades. This user's repos are m1727 (CPU default) and m1727_g (GPU). Use this skill whenever $NERSC_HOST is set, the user runs Slurm commands, touches /global/cfs or /pscratch, works with module load, or asks about NERSC-specific workflows.
+description: How to work productively at NERSC. Covers Slurm job submission and QOS selection (salloc/sbatch/srun, --account, --qos, --constraint), filesystem strategy (HOME/CFS/PSCRATCH/COMMUNITY) and quotas, login-vs-compute discipline, NERSC-specific gotchas (mandatory --account, GPU repo `_g` suffix, $PSCRATCH purge policy, srun for everything that runs on compute, login-node CPU caps), and module/conda environment setup. The current flagship system is Perlmutter (CPU = AMD Milan, GPU = 4× A100/node); the durable conventions carry across system upgrades. DESC NERSC repos: m1727 (CPU), m1727_g (GPU). Use this skill whenever $NERSC_HOST is set, the user runs Slurm commands, touches /global/cfs or /pscratch, works with module load, or asks about NERSC-specific workflows.
 ---
 
 # Working at NERSC
@@ -11,7 +11,7 @@ Hard rules: **never run real work on a login node**, **always pass `--account=<r
 
 Action-oriented; jump to the section that fits. Bundled scripts in `scripts/`, deeper reference in `references/`.
 
-## This user's accounts and paths
+## Accounts and paths
 
 | Repo | For |
 |---|---|
@@ -20,12 +20,12 @@ Action-oriented; jump to the section that fits. Bundled scripts in `scripts/`, d
 
 | Path | Var | Use |
 |---|---|---|
-| `/global/homes/j/jfc20` | `$HOME` | Code, dotfiles, venvs (40 GB / 1M inodes) |
-| `/pscratch/sd/j/jfc20` | `$PSCRATCH` / `$SCRATCH` | Big I/O, intermediates — purged after ~8 wk inactivity |
-| `/global/cfs/cdirs/<project>/users/jfc20` | — | Persistent project-shared output |
+| `/global/homes/<l>/<user>` | `$HOME` | Code, dotfiles, venvs (40 GB / 1M inodes) |
+| `/pscratch/sd/<l>/<user>` | `$PSCRATCH` / `$SCRATCH` | Big I/O, intermediates — purged after ~8 wk inactivity |
+| `/global/cfs/cdirs/<project>/users/<user>` | — | Persistent project-shared output |
 | `/global/common/software/<project>/envs/<name>` | — | Shared conda/venv envs (fast import) |
 
-Rule of thumb: inputs from CFS, big I/O on `$PSCRATCH`, code in `$HOME`, keepers in `$CFS/<project>/users/jfc20`.
+Rule of thumb: inputs from CFS, big I/O on `$PSCRATCH`, code in `$HOME`, keepers in `$CFS/<project>/users/<user>`.
 
 ## Where am I? (always do this first)
 
@@ -211,4 +211,3 @@ Run any of them directly: `scripts/check_quota.sh`. No dependencies beyond a NER
 - IRIS (account/repo dashboard): <https://iris.nersc.gov>
 - JupyterHub: <https://jupyter.nersc.gov>
 - Open a ticket: <https://help.nersc.gov> or `accounts@nersc.gov` for account issues
-- DESI data model: <https://desidatamodel.readthedocs.io>

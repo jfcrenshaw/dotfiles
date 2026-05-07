@@ -1,11 +1,11 @@
 ---
-name: audit-config
-description: Audits the global Claude Code configuration in ~/.dotfiles/claude/ against established best practices. Covers CLAUDE.md length and content fitness, skill naming and description quality, SKILL.md structure and progressive disclosure, settings.json permissions, and directory hygiene. Use whenever asked to audit, review, or suggest improvements to Claude's own config; also use when creating a new skill, adding content to CLAUDE.md or settings.json, or modifying existing skills — ensures new additions follow best practices from the start.
+name: skill-design
+description: Best-practices guide for designing and auditing Claude Code skills and global configuration. Covers CLAUDE.md length and content fitness, skill naming and description quality, SKILL.md structure and progressive disclosure, settings.json permissions, and directory hygiene. Use whenever asked to audit, review, or suggest improvements to a Claude config; also use when creating a new skill, adding content to CLAUDE.md or settings.json, or modifying existing skills — ensures new additions follow best practices from the start.
 ---
 
-# Auditing Claude's global config
+# Designing and auditing Claude skills
 
-Config lives at `~/.dotfiles/claude/` (symlinked to `~/.claude/{CLAUDE.md,settings.json,skills/}`).
+Config lives at `~/.claude/` (containing `CLAUDE.md`, `settings.json`, and `skills/`).
 
 Copy this checklist and track progress through each section:
 
@@ -38,10 +38,10 @@ Pre-approve all safe read-only operations; use hooks for truly deterministic beh
 ## Step 1: Inventory
 
 ```bash
-find ~/.dotfiles/claude -type f | sort
-wc -l ~/.dotfiles/claude/CLAUDE.md
-wc -l ~/.dotfiles/claude/skills/*/SKILL.md
-ls -la ~/.dotfiles/claude/skills/
+find ~/.claude -type f | sort
+wc -l ~/.claude/CLAUDE.md
+wc -l ~/.claude/skills/*/SKILL.md
+ls -la ~/.claude/skills/
 ```
 
 Note the line count of CLAUDE.md and each SKILL.md before proceeding.
@@ -116,7 +116,7 @@ For **each skill** in `skills/`:
 ## Step 4: settings.json audit
 
 ```bash
-cat ~/.dotfiles/claude/settings.json
+cat ~/.claude/settings.json
 ```
 
 - [ ] All commonly-used read-only Bash tools are in `permissions.allow` (ls, find, grep, cat, head, tail, wc, stat, etc.)
@@ -131,7 +131,7 @@ cat ~/.dotfiles/claude/settings.json
 
 ```bash
 ls -la ~/.claude/                # check what's a symlink vs real file
-ls ~/.dotfiles/claude/skills/    # confirm skill dirs
+ls ~/.claude/skills/    # confirm skill dirs
 ```
 
 - [ ] `~/.claude/CLAUDE.md` → symlink to dotfiles ✓

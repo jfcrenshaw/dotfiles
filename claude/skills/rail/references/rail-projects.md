@@ -91,8 +91,8 @@ Project:
 
   # Paths — must override root, scratch_root, project
   CommonPaths:
-    root: /global/cfs/cdirs/desc-wl/users/jfc20/data
-    scratch_root: /pscratch/sd/j/jfc20
+    root: /global/cfs/cdirs/desc-wl/users/<user>/data
+    scratch_root: /pscratch/sd/<l>/<user>
     project: my_analysis
     # Derived defaults (can be overridden):
     # project_dir: {root}/projects/{project}

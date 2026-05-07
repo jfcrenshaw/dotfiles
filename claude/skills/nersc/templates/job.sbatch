@@ -6,7 +6,7 @@
 # Live monitor:   sqs ; or: scontrol show job <JOBID>
 
 #SBATCH -J <<JOBNAME>>
-#SBATCH -A <<REPO>>                    # CPU repo (e.g. desi, m1234). For GPU use the *_g version.
+#SBATCH -A <<REPO>>                    # CPU repo (e.g. m1727). For GPU use the *_g version.
 #SBATCH -C cpu                         # `cpu` = Milan; `gpu` = Milan + 4× A100. Add `&hbm80g` to require 80 GB GPUs.
 #SBATCH -q regular                     # CPU: interactive|debug|regular|shared|preempt|overrun
                                        # GPU: gpu_interactive|gpu_debug|gpu_regular|gpu_shared|gpu_preempt
@@ -26,7 +26,7 @@ set -euo pipefail
 mkdir -p logs
 
 # --- environment ---
-module load python                     # or your stack: `module load desimodules/<tag>` etc.
+module load python                     # or your stack: `module load <your-modules>`
 # source activate /global/common/software/<project>/envs/<name>
 
 # --- runtime hygiene ---

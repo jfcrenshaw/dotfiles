@@ -29,7 +29,7 @@ NERSC's current flagship (Perlmutter) mounts several distinct tiers; using the w
 
 - GPFS, durable, shared per project. Quotas are per-project, not per-user.
 - Fast for streaming, slow for million-file `find`/`ls -R`.
-- Each project's structure is project-defined. DESI for example uses `$DESI_ROOT/spectro/redux/<SPECPROD>/...`.
+- Each project's structure is project-defined. DESC for example uses `/global/cfs/cdirs/desc-wl/<subdir>/`.
 - `prjquota <project>` shows the project's quota.
 - Some projects have writable user areas at `/global/cfs/cdirs/<project>/users/<user>/`. These are persistent and are the right home for "outputs I want to keep but don't fit in $HOME."
 
