@@ -106,20 +106,33 @@ if [ -f "$HOME/.github_token" ]; then
 fi
 
 # Background check: warn if dotfiles are behind/ahead of remote or have uncommitted changes (skipped on HPC jobs)
+# Warnings are staged to a file and displayed by a precmd hook so p10k doesn't overwrite them.
 if [[ -z "$SLURM_JOB_ID" ]]; then
+    _dotfiles_warn_file="${TMPDIR:-/tmp}/.dotfiles_warn_$$"
     (
         sleep 1
         # Local checks — no network needed
         dirty=$(git -C "$HOME/.dotfiles" status --porcelain 2>/dev/null)
-        [[ -n "$dirty" ]] && print "\n\033[33mwarning: dotfiles have uncommitted changes\033[0m"
+        [[ -n "$dirty" ]] && print "warning: dotfiles have uncommitted changes" >> "$_dotfiles_warn_file"
         ahead=$(git -C "$HOME/.dotfiles" rev-list @{u}..HEAD --count 2>/dev/null)
-        (( ahead > 0 )) && print "\n\033[33mwarning: dotfiles have $ahead commit(s) not pushed to remote\033[0m"
+        (( ahead > 0 )) && print "warning: dotfiles have $ahead commit(s) not pushed to remote" >> "$_dotfiles_warn_file"
         # Remote check — requires network
         nc -z -w2 github.com 443 2>/dev/null || exit 0
         git -C "$HOME/.dotfiles" fetch origin -q 2>/dev/null || exit 0
         behind=$(git -C "$HOME/.dotfiles" rev-list HEAD..@{u} --count 2>/dev/null)
-        (( behind > 0 )) && print "\n\033[33mwarning: dotfiles are $behind commit(s) behind remote\033[0m"
+        (( behind > 0 )) && print "warning: dotfiles are $behind commit(s) behind remote" >> "$_dotfiles_warn_file"
     ) &!
+
+    _dotfiles_warn_precmd() {
+        [[ -f "${_dotfiles_warn_file:-}" ]] || return
+        print ""
+        while IFS= read -r line; do
+            print "\033[33m$line\033[0m"
+        done < "$_dotfiles_warn_file"
+        print ""
+        rm -f "$_dotfiles_warn_file"
+    }
+    precmd_functions+=(_dotfiles_warn_precmd)
 fi
 
 # Epyc and Baldur
