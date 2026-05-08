@@ -105,14 +105,18 @@ if [ -f "$HOME/.github_token" ]; then
     source "$HOME/.github_token"
 fi
 
-# Background check: warn if dotfiles are behind remote (skipped on HPC jobs)
+# Background check: warn if dotfiles are behind/ahead of remote or have uncommitted changes (skipped on HPC jobs)
 if [[ -z "$SLURM_JOB_ID" ]]; then
     (
         sleep 1
+        dirty=$(git -C "$HOME/.dotfiles" status --porcelain 2>/dev/null)
+        [[ -n "$dirty" ]] && print "\n\033[33mwarning: dotfiles have uncommitted changes\033[0m"
         nc -z -w2 github.com 443 2>/dev/null || exit 0
         git -C "$HOME/.dotfiles" fetch origin -q 2>/dev/null || exit 0
         behind=$(git -C "$HOME/.dotfiles" rev-list HEAD..@{u} --count 2>/dev/null)
+        ahead=$(git -C "$HOME/.dotfiles" rev-list @{u}..HEAD --count 2>/dev/null)
         (( behind > 0 )) && print "\n\033[33mwarning: dotfiles are $behind commit(s) behind remote\033[0m"
+        (( ahead > 0 )) && print "\n\033[33mwarning: dotfiles have $ahead commit(s) not pushed to remote\033[0m"
     ) &!
 fi
 
