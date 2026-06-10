@@ -105,6 +105,12 @@ if [ -f "$HOME/.github_token" ]; then
     source "$HOME/.github_token"
 fi
 
+# export ADS token
+if [ -f "$HOME/.ads/dev_key" ]; then
+  export ADS_API_TOKEN="$(tr -d '\r\n' < "$HOME/.ads/dev_key")"
+  export ADS_DEV_KEY="$(tr -d '\r\n' < "$HOME/.ads/dev_key")"
+fi
+
 # Background check: warn if dotfiles are behind/ahead of remote or have uncommitted changes (skipped on HPC jobs)
 # Warnings are staged to a file and displayed by a precmd hook so p10k doesn't overwrite them.
 if [[ -z "$SLURM_JOB_ID" ]]; then
